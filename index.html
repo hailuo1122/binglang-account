@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>槟榔厂记账 - 重新定义劳动的尊严</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --emerald-neon: #10b981;
+            --emerald-deep: #064e3b;
+            --obsidian: #040d08;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--obsidian);
+            color: #f8fafc;
+            margin: 0;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .bebas { font-family: 'Bebas Neue', sans-serif; }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 20px;
+            height: 20px;
+            background: var(--emerald-neon);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        #cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--emerald-neon);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Background Effects */
+        .glow-sphere {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3");
+            opacity: 0.03;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Typography & Layout */
+        .text-reveal {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        .hero-title {
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+
+        /* Phone Parallax */
+        .phone-container {
+            perspective: 1000px;
+        }
+
+        .phone-wrapper {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease-out;
+        }
+
+        .phone-inner {
+            background: #0f172a;
+            border: 8px solid #1e293b;
+            box-shadow: 
+                0 0 0 2px rgba(255,255,255,0.05),
+                0 50px 100px -20px rgba(0,0,0,0.8),
+                0 30px 60px -30px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Buttons */
+        .btn-premium {
+            background: #fff;
+            color: #000;
+            padding: 1.25rem 2.5rem;
+            border-radius: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-premium:hover {
+            background: var(--emerald-neon);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Decorative Elements */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 1px solid var(--emerald-neon);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-grid-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.4s ease;
+        }
+
+        .feature-grid-item:hover {
+            background: rgba(16, 185, 129, 0.03);
+            border-color: var(--emerald-neon);
+            transform: translateY(-10px);
+        }
+
+        .step-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 8rem;
+            line-height: 1;
+            opacity: 0.05;
+            position: absolute;
+            top: -2rem;
+            left: -1rem;
+            z-index: 0;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .accordion-header {
+            cursor: pointer;
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: #94a3b8;
+            padding-bottom: 0;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+            padding-bottom: 2rem;
+        }
+
+        .accordion-item.active .icon-plus {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+    <div class="noise-overlay"></div>
+    <div class="glow-sphere" style="top: -20%; right: -10%;"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
+        <div class="text-2xl font-black tracking-tighter bebas">BINGLANG ACC.</div>
+        <div class="hidden md:flex space-x-12 text-xs font-bold tracking-[0.3em] uppercase opacity-60">
+            <a href="#features" class="hover:opacity-100 transition-opacity">Features</a>
+            <a href="#how-it-works" class="hover:opacity-100 transition-opacity">How it works</a>
+            <a href="#faq" class="hover:opacity-100 transition-opacity">FAQ</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center px-8 md:px-24 py-32 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div class="lg:col-span-7 space-y-12">
+                <div class="text-reveal">
+                    <h2 class="text-emerald-500 font-bold tracking-[0.4em] uppercase text-sm mb-4 block">The Ultimate Tracker</h2>
+                    <h1 class="hero-title bebas text-white">
+                        每一滴汗水<br/>
+                        <span class="opacity-30 text-emerald-500">皆有其价</span>
+                    </h1>
+                </div>
+
+                <p class="text-xl text-slate-400 max-w-xl leading-relaxed font-light">
+                    打破繁琐，直面真实。为槟榔厂量身打造的高级记账系统。采用 <span class="text-white font-medium">Material 3</span> 工业级交互，纯本地加密，离线优先。这是属于劳动者的数字工具。
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-8 pt-4">
+                    <a href="./app-release.apk" class="btn-premium flex items-center group">
+                        <span>Get the App</span>
+                        <i data-lucide="arrow-right" class="ml-3 w-5 h-5 group-hover:translate-x-2 transition-transform"></i>
+                    </a>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-obsidian bg-emerald-900 flex items-center justify-center text-[10px] font-bold">JD</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-obsidian bg-teal-900 flex items-center justify-center text-[10px] font-bold">AK</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-obsidian bg-slate-800 flex items-center justify-center text-[10px] font-bold">x12</div>
+                        </div>
+                        <span class="text-xs font-bold tracking-widest text-slate-500 uppercase">Trusted by 200+ workers</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-12 border-t border-white/5">
+                    <div class="stat-card">
+                        <div class="text-xs text-emerald-500 font-bold mb-2 uppercase tracking-tighter">Privacy</div>
+                        <div class="text-lg font-bold">100% 本地存储</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-xs text-emerald-500 font-bold mb-2 uppercase tracking-tighter">Cost</div>
+                        <div class="text-lg font-bold">永久免费使用</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-xs text-emerald-500 font-bold mb-2 uppercase tracking-tighter">Speed</div>
+                        <div class="text-lg font-bold">秒级记录响应</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 phone-container hidden lg:block">
+                <div class="phone-wrapper">
+                    <div class="phone-inner w-[320px] h-[650px] rounded-[3.5rem] p-4 relative">
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1e293b] rounded-b-2xl z-20"></div>
+                        <div class="w-full h-full bg-[#040d08] rounded-[2.8rem] overflow-hidden relative border border-white/5">
+                            <div class="p-8 space-y-8">
+                                <div class="flex justify-between items-center opacity-40">
+                                    <i data-lucide="menu" class="w-5 h-5"></i>
+                                    <i data-lucide="user" class="w-5 h-5"></i>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="text-[10px] uppercase tracking-[0.3em] text-emerald-500 font-bold">Total Earnings</div>
+                                    <div class="text-4xl font-black bebas tracking-wider">¥ 12,840.00</div>
+                                </div>
+                                <div class="h-40 w-full bg-emerald-500/5 rounded-3xl border border-emerald-500/10 flex items-center justify-center">
+                                    <div class="w-full px-6 space-y-4">
+                                        <div class="flex justify-between items-end">
+                                            <div class="h-12 w-3 bg-emerald-500/20 rounded-full"></div>
+                                            <div class="h-20 w-3 bg-emerald-500/40 rounded-full"></div>
+                                            <div class="h-16 w-3 bg-emerald-500/20 rounded-full"></div>
+                                            <div class="h-24 w-3 bg-emerald-500 rounded-full"></div>
+                                            <div class="h-14 w-3 bg-emerald-500/30 rounded-full"></div>
+                                            <div class="h-18 w-3 bg-emerald-500/50 rounded-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center"><i data-lucide="sun" class="w-4 h-4 text-orange-500"></i></div>
+                                            <div class="text-xs font-bold uppercase">Day Shift</div>
+                                        </div>
+                                        <div class="text-xs font-black">+ ¥ 350</div>
+                                    </div>
+                                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center"><i data-lucide="moon" class="w-4 h-4 text-indigo-500"></i></div>
+                                            <div class="text-xs font-bold uppercase">Night Shift</div>
+                                        </div>
+                                        <div class="text-xs font-black">+ ¥ 420</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/40">
+                                <i data-lucide="plus" class="text-black"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="px-8 md:px-24 py-32 bg-white/[0.01]">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-24">
+                <h2 class="bebas text-6xl md:text-8xl mb-8">极速记录 / <span class="text-emerald-500">智能洞察</span></h2>
+                <p class="text-slate-500 max-w-2xl text-lg">专为高强度生产环境优化，拒绝多余操作。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="feature-grid-item p-10 rounded-[2rem] space-y-6">
+                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="zap" class="text-emerald-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="bebas text-3xl">智能打标</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">白班、夜班、休息日一键切换。系统自动预设金额，两秒完成今日记录。</p>
+                </div>
+
+                <div class="feature-grid-item p-10 rounded-[2rem] space-y-6">
+                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="bar-chart-3" class="text-emerald-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="bebas text-3xl">月度结算</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">自动汇总月度总收入，清晰展示收益曲线，让您的辛苦付出账目透明。</p>
+                </div>
+
+                <div class="feature-grid-item p-10 rounded-[2rem] space-y-6">
+                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="shield-check" class="text-emerald-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="bebas text-3xl">隐私第一</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">所有数据仅保存在您的手机本地。没有云端后门，没有隐私泄露风险。</p>
+                </div>
+
+                <div class="feature-grid-item p-10 rounded-[2rem] space-y-6">
+                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="bug" class="text-emerald-500 w-8 h-8"></i>
+                    </div>
+                    <h3 class="bebas text-3xl">调试模式</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">内置专业调试工具，一键生成模拟数据，确保在任何极端情况下应用都能稳定运行。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="px-8 md:px-24 py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto relative">
+            <h2 class="bebas text-6xl md:text-8xl mb-24 text-center">三步开启 / <span class="text-emerald-500">透明账本</span></h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-24">
+                <div class="relative group">
+                    <span class="step-number">01</span>
+                    <div class="z-10 relative space-y-6">
+                        <h3 class="bebas text-4xl">记录工时</h3>
+                        <p class="text-slate-400">选择班次并确认金额。日期自动匹配，亦可根据实际情况灵活微调。</p>
+                        <div class="h-64 w-full bg-white/5 border border-white/5 rounded-[2rem] overflow-hidden">
+                             <div class="p-8 space-y-4">
+                                 <div class="h-4 w-2/3 bg-emerald-500/20 rounded"></div>
+                                 <div class="h-12 w-full bg-emerald-500/10 border border-emerald-500/20 rounded-xl"></div>
+                                 <div class="h-4 w-1/2 bg-white/10 rounded"></div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <span class="step-number">02</span>
+                    <div class="z-10 relative space-y-6">
+                        <h3 class="bebas text-4xl">自动结算</h3>
+                        <p class="text-slate-400">应用自动计算日、周、月收益。无需计算器，系统为您搞定一切繁琐算术。</p>
+                        <div class="h-64 w-full bg-white/5 border border-white/5 rounded-[2rem] overflow-hidden">
+                            <div class="flex items-center justify-center h-full">
+                                <i data-lucide="refresh-cw" class="w-16 h-16 text-emerald-500 animate-spin-slow"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <span class="step-number">03</span>
+                    <div class="z-10 relative space-y-6">
+                        <h3 class="bebas text-4xl">掌握全局</h3>
+                        <p class="text-slate-400">通过直观的可视化图表，实时掌握个人收益动态，为生活提供数据支撑。</p>
+                        <div class="h-64 w-full bg-white/5 border border-white/5 rounded-[2rem] overflow-hidden">
+                             <div class="p-8 flex items-end justify-between h-full">
+                                 <div class="h-1/2 w-4 bg-emerald-500 rounded-t"></div>
+                                 <div class="h-3/4 w-4 bg-emerald-500/60 rounded-t"></div>
+                                 <div class="h-full w-4 bg-emerald-500 rounded-t"></div>
+                                 <div class="h-2/3 w-4 bg-emerald-500/40 rounded-t"></div>
+                                 <div class="h-4/5 w-4 bg-emerald-500/80 rounded-t"></div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="px-8 md:px-24 py-32 bg-white/[0.01]">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="bebas text-6xl mb-16">常见问题 / <span class="text-emerald-500">FAQ</span></h2>
+            
+            <div class="space-y-4">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="text-lg font-bold">记账数据会上传到服务器吗？</span>
+                        <i data-lucide="plus" class="icon-plus transition-transform w-6 h-6"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>绝不。我们采用“本地优先”设计理念，所有数据仅存储在您手机的 SQLite 数据库中。除非您手动导出，否则任何人都无法访问您的账本。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="text-lg font-bold">为什么软件是完全免费的？</span>
+                        <i data-lucide="plus" class="icon-plus transition-transform w-6 h-6"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>这是一个公益项目，旨在为工友们提供便捷的数字工具。我们不通过软件盈利，也不含任何隐藏收费项目。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="text-lg font-bold">更换手机后数据如何迁移？</span>
+                        <i data-lucide="plus" class="icon-plus transition-transform w-6 h-6"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>目前的版本以本地存储为主。在未来的更新中，我们将提供离线备份文件导出功能，方便您通过微信或文件传输进行手动迁移。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span class="text-lg font-bold">如果我记错了日期怎么办？</span>
+                        <i data-lucide="plus" class="icon-plus transition-transform w-6 h-6"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>没问题。在添加记录界面，点击日期即可弹出日历进行修改。已保存的记录也可以在列表页点击进入重新编辑。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="px-8 py-48 text-center relative overflow-hidden">
+        <div class="glow-sphere" style="top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1;"></div>
+        <h2 class="bebas text-7xl md:text-9xl mb-12">开始您的 <span class="text-emerald-500">透明账本</span></h2>
+        <a href="./app-release.apk" class="btn-premium inline-flex items-center group">
+            <span>立即下载安卓版</span>
+            <i data-lucide="download" class="ml-3 w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-8 md:px-24 py-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
+            <div class="col-span-2 space-y-6">
+                <div class="text-2xl font-black tracking-tighter bebas">BINGLANG ACC.</div>
+                <p class="text-slate-500 max-w-sm text-sm leading-relaxed">专为槟榔厂员工设计的现代化记账解决方案。由社区驱动，为每一位辛勤的劳动者提供精准的数据支持。</p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest mb-6 text-emerald-500">Links</h4>
+                <ul class="space-y-4 text-sm text-slate-400 font-medium">
+                    <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+                    <li><a href="#how-it-works" class="hover:text-white transition-colors">How it works</a></li>
+                    <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest mb-6 text-emerald-500">Support</h4>
+                <ul class="space-y-4 text-sm text-slate-400 font-medium">
+                    <li>Privacy Policy</li>
+                    <li>Terms of Service</li>
+                    <li>Contact Us</li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
+            <span>Developed by xdy • 2026</span>
+            <span>All rights reserved</span>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Cursor Logic
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(follower, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.3 });
+        });
+
+        // Parallax Phone Logic
+        const container = document.querySelector('.phone-container');
+        const wrapper = document.querySelector('.phone-wrapper');
+
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (e.clientY - rect.top - centerY) / 20;
+            const rotateY = (centerX - (e.clientX - rect.left)) / 20;
+
+            gsap.to(wrapper, { rotateX: rotateX, rotateY: rotateY, duration: 0.5, ease: 'power2.out' });
+        });
+
+        container.addEventListener('mouseleave', () => {
+            gsap.to(wrapper, { rotateX: 0, rotateY: 0, duration: 1, ease: 'elastic.out(1, 0.3)' });
+        });
+
+        // Entrance Animations
+        gsap.from('.hero-title', { y: 100, opacity: 0, duration: 1.5, ease: 'power4.out' });
+
+        // Scroll Reveal Animations
+        gsap.utils.toArray('.feature-grid-item').forEach((item, i) => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: 'top 90%' },
+                y: 50, opacity: 0, duration: 0.8, delay: i * 0.1
+            });
+        });
+
+        gsap.utils.toArray('.step-number').forEach((item) => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: 'top 80%' },
+                scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)'
+            });
+        });
+
+        // Accordion Logic
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
