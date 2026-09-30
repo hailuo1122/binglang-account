@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>槟榔厂记账 - 重新定义劳动的尊严</title>
+    <title>汗水金库 - 重新定义劳动的尊严</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -192,7 +192,10 @@
     
     <!-- Navigation -->
     <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
-        <div class="text-2xl font-black tracking-tighter bebas">BINGLANG ACC.</div>
+        <div class="flex items-center space-x-3">
+            <img src="./logo.png" alt="Sweat Vault Logo" class="w-10 h-10 rounded-xl object-cover border border-white/20">
+            <div class="text-2xl font-black tracking-tighter bebas">SWEAT VAULT.</div>
+        </div>
         <div class="hidden md:flex space-x-12 text-xs font-bold tracking-[0.3em] uppercase opacity-60">
             <a href="#features" class="hover:opacity-100 transition-opacity">Features</a>
             <a href="#how-it-works" class="hover:opacity-100 transition-opacity">How it works</a>
@@ -204,16 +207,19 @@
     <section class="min-h-screen flex flex-col justify-center px-8 md:px-24 py-32 relative overflow-hidden">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             <div class="lg:col-span-7 space-y-12">
-                <div class="text-reveal">
-                    <h2 class="text-emerald-500 font-bold tracking-[0.4em] uppercase text-sm mb-4 block">The Ultimate Tracker</h2>
-                    <h1 class="hero-title bebas text-white">
-                        每一滴汗水<br/>
-                        <span class="opacity-30 text-emerald-500">皆有其价</span>
-                    </h1>
+                <div class="flex items-center space-x-6 mb-8">
+                    <img src="./logo.png" alt="Logo" class="w-20 h-20 rounded-3xl shadow-2xl border-2 border-emerald-500/30">
+                    <div class="text-reveal">
+                        <h2 class="text-emerald-500 font-bold tracking-[0.4em] uppercase text-sm mb-2 block">The Professional Labor Tracker</h2>
+                        <h1 class="hero-title bebas text-white">
+                            每一滴汗水<br/>
+                            <span class="opacity-30 text-emerald-500">汗水金库</span>
+                        </h1>
+                    </div>
                 </div>
 
                 <p class="text-xl text-slate-400 max-w-xl leading-relaxed font-light">
-                    打破繁琐，直面真实。为槟榔厂量身打造的高级记账系统。采用 <span class="text-white font-medium">Material 3</span> 工业级交互，纯本地加密，离线优先。这是属于劳动者的数字工具。
+                    打破繁琐，直面真实。为高强度生产者量身打造的“汗水金库”。采用 <span class="text-white font-medium">Material 3</span> 工业级交互，纯本地加密，离线优先。这是属于您的数字资产管家。
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-8 pt-4">
@@ -462,8 +468,8 @@
     <footer class="px-8 md:px-24 py-24 border-t border-white/5">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
             <div class="col-span-2 space-y-6">
-                <div class="text-2xl font-black tracking-tighter bebas">BINGLANG ACC.</div>
-                <p class="text-slate-500 max-w-sm text-sm leading-relaxed">专为槟榔厂员工设计的现代化记账解决方案。由社区驱动，为每一位辛勤的劳动者提供精准的数据支持。</p>
+                <div class="text-2xl font-black tracking-tighter bebas">SWEAT VAULT.</div>
+                <p class="text-slate-500 max-w-sm text-sm leading-relaxed">专为高强度生产者设计的现代化记账解决方案。由社区驱动，为每一位辛勤的劳动者提供精准的数据支持。</p>
             </div>
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-widest mb-6 text-emerald-500">Links</h4>
@@ -483,10 +489,16 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
-            <span>Developed by xdy • 2026</span>
+            <span>Developed by Sweat Vault Team • 2026</span>
             <span>All rights reserved</span>
         </div>
     </footer>
+
+    <!-- Logo Generator Prompt (Hidden for user reference) -->
+    <!-- 
+    Logo Prompt for DALL-E / Midjourney:
+    "A professional app icon for a worker's financial app named 'Sweat Vault'. The logo features a stylized combination of a golden vault and a minimalist drop of sweat, set against a deep emerald green background. The style is modern 3D glassmorphism with soft golden lighting, representing hard work and wealth. High quality, 4k, minimalist, clean lines."
+    -->
 
     <script>
         lucide.createIcons();
